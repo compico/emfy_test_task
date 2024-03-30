@@ -48,28 +48,33 @@
         "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
         "composer/package-versions-deprecated": "^1.10.99",
         "laminas/laminas-component-installer": "^2.6 || ^3.0",
+        "laminas/laminas-config": "^3.9",
         "laminas/laminas-config-aggregator": "^1.6",
+        "laminas/laminas-di": "^3.13",
         "laminas/laminas-diactoros": "^3.0.0",
+        "laminas/laminas-servicemanager": "^3.22",
         "laminas/laminas-stdlib": "^3.6",
         "mezzio/mezzio": "^3.7",
+        "mezzio/mezzio-fastroute": "^3.11.0",
         "mezzio/mezzio-helpers": "^5.7",
-        "laminas/laminas-servicemanager": "^3.22",
-        "mezzio/mezzio-fastroute": "^3.11.0"
+        "pda/pheanstalk": "4.0.*"
     },
     "require-dev": {
+        "filp/whoops": "^2.15.4",
         "laminas/laminas-coding-standard": "~2.5.0",
         "laminas/laminas-development-mode": "^3.12.0",
         "mezzio/mezzio-tooling": "^2.9",
         "phpunit/phpunit": "^10.5.5",
         "psalm/plugin-phpunit": "^0.18.4",
         "roave/security-advisories": "dev-master",
-        "vimeo/psalm": "^5.18",
-        "filp/whoops": "^2.15.4"
+        "symfony/var-dumper": "^6.4",
+        "vimeo/psalm": "^5.18"
     },
     "autoload": {
         "psr-4": {
             "App\\": "src/App/",
-            "Crm\\": "src/Crm/src/"
+            "Crm\\": "src/Crm/src/",
+            "Queue\\": "src/Queue/src/"
         }
     },
     "autoload-dev": {

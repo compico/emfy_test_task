@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
+use Laminas\Config\Processor\Token;
 use Laminas\ServiceManager\ServiceManager;
 
 // Load configuration
 $config = require __DIR__ . '/config.php';
 
-$dependencies                       = $config['dependencies'];
+/** @var array $dependencies */
+$dependencies = $config['dependencies'];
 $dependencies['services']['config'] = $config;
 
-// Build container
-return new ServiceManager($dependencies);
+$processor = new Token(getenv(), '%env(', ')%');
+
+$preparedConfigs = (array) $processor->processValue($dependencies);
+
+return new ServiceManager($preparedConfigs);

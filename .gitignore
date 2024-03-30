@@ -2,6 +2,7 @@
 .psalm-cache
 .phpunit.cache
 .idea
+.env
 clover.xml
 coveralls-upload.json
 phpunit.xml

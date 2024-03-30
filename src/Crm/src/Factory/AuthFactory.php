@@ -6,15 +6,19 @@ namespace Crm\Factory;
 
 use Crm\Handler\AuthHandler;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Console\Logger\ConsoleLogger;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Queue\Client\Beanstalk;
+use Queue\Client\ListenerInterface;
 
 class AuthFactory
 {
-    public function __invoke(ContainerInterface $container) : AuthHandler
+    public function __invoke(ContainerInterface $container): AuthHandler
     {
+        /** @var Beanstalk $bs */
+        $bs = $container->get(Beanstalk::class);
+        $bs->useTube(ListenerInterface::CRM_TUBE);
+
         return new AuthHandler(
-            new ConsoleLogger(new ConsoleOutput())
+            $bs
         );
     }
 }
