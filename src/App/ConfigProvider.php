@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Factory\LoggerFactory;
+use Psr\Log\LoggerInterface;
+
 /**
  * The configuration provider for the App module
  *
@@ -33,6 +36,7 @@ class ConfigProvider
             'invokables' => [
             ],
             'factories'  => [
+                LoggerInterface::class => LoggerFactory::class,
             ],
         ];
     }

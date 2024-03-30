@@ -25,7 +25,7 @@ class Beanstalk implements ListenerInterface
 
     public function sendTask(TaskInterface $task): int
     {
-        $job = $this->connection->put($task->getData(), $task->getPriority());
+        $job = $this->connection->put($task->toJson(), $task->getPriority());
 
         return $job->getId();
     }

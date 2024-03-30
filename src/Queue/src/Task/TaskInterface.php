@@ -14,15 +14,7 @@ interface TaskInterface
 
     public function toArray(): array;
 
-    public function toJson(): array;
-
-    public function getData(): string;
-
-    public function getTube(): string;
-
-    public function setTube(string $tubeName): void;
+    public function toJson(): string;
 
     public function getPriority(): int;
-
-    public function setPriority(int $priority): self;
 }
