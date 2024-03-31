@@ -23,14 +23,14 @@ class PheanstalkFactory
         /** @var array $config */
         $config = $container->get('config')['beanstalk'] ?? [];
 
-        if (empty($config)) {
+        if ($config === null) {
             throw new EmptyConfigException('Beanstalk config is empty');
         }
 
-        $host = $config['host'] ?? '';
-        $port = (int) ($config['port'] ?? 0);
+        $host = (string)($config['host'] ?? 'localhost');
+        $port = (int)($config['port'] ?? 33100);
 
-        if (empty($host) || empty($port)) {
+        if ($host === '' || $port === 0) {
             throw new EmptyConfigException('Beanstalk config is empty');
         }
 

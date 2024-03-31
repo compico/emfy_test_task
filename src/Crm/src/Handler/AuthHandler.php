@@ -11,14 +11,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Queue\Client\ListenerInterface;
+use Queue\Client\QueueInterface;
 
 class AuthHandler implements RequestHandlerInterface
 {
     protected LoggerInterface $logger;
-    protected ListenerInterface $queue;
+    protected QueueInterface $queue;
 
-    public function __construct(LoggerInterface $logger, ListenerInterface $queue)
+    public function __construct(LoggerInterface $logger, QueueInterface $queue)
     {
         $this->logger = $logger;
         $this->queue  = $queue;

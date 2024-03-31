@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Queue;
 
-use Pheanstalk\Connection;
-use Pheanstalk\Contract\SocketFactoryInterface;
-use Pheanstalk\SocketFactory;
 use Queue\Client\Beanstalk;
+use Queue\Client\QueueInterface;
+use Queue\Command\ConsumerCommand;
 use Queue\Factory\PheanstalkFactory;
 
 /**
@@ -28,6 +27,7 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'beanstalk' => $this->getBeanstalkConfig(),
+            'laminas-cli' => $this->getCommands(),
         ];
     }
 
@@ -41,7 +41,9 @@ class ConfigProvider
             'factories' => [
                 Beanstalk::class => PheanstalkFactory::class,
             ],
-            'preferences' => [],
+            'preferences' => [
+                QueueInterface::class => Beanstalk::class,
+            ],
         ];
     }
 
@@ -50,6 +52,15 @@ class ConfigProvider
         return [
             'host' => '%env(QUEUE_HOST)%',
             'port' => '%env(QUEUE_PORT)%',
+        ];
+    }
+
+    public function getCommands(): array
+    {
+        return [
+            'commands' => [
+                'system:consumer' => ConsumerCommand::class,
+            ],
         ];
     }
 }

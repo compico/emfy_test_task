@@ -12,31 +12,11 @@ use function json_encode;
 
 trait TaskTrait
 {
-    protected string $workerClass;
     protected string $tubeName;
 
     public function getWorkerClass(): string
     {
-        return $this->workerClass;
-    }
-
-    public function setWorkerClass(string $class): self
-    {
-        $this->workerClass = $class;
-
-        return $this;
-    }
-
-    public function getTubeName(): string
-    {
-        return $this->tubeName;
-    }
-
-    public function setTubeName(string $tubeName): self
-    {
-        $this->tubeName = $tubeName;
-
-        return $this;
+        return self::WORKER_CLASS;
     }
 
     public function toJson(): string
