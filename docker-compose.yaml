@@ -1,7 +1,7 @@
 version: '3.9'
 
 services:
-  php:
+  php: &php-template
     build: .
     image: php-emfy:latest
     restart: unless-stopped
@@ -9,15 +9,13 @@ services:
       - ".:/var/www/html"
     env_file:
       - "./.env"
+    environment:
+      QUEUE_HOST: beanstalk
+      DB_HOST: mysql
   consumer:
-    image: php-emfy:latest
-    restart: unless-stopped
-    volumes:
-      - ".:/var/www/html"
+    <<: *php-template
     working_dir: '/var/www/html'
     command: [ 'php', 'vendor/bin/laminas', 'system:consumer', '-tcrm' ]
-    env_file:
-      - "./.env"
   nginx:
     image: nginx:stable-alpine
     restart: unless-stopped

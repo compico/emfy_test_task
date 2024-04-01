@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Database\Connection;
 use App\Factory\LoggerFactory;
+use Phpmig\Adapter\Illuminate\Database;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -24,6 +26,7 @@ class ConfigProvider
     {
         return [
             'dependencies' => $this->getDependencies(),
+            'database' => $this->getDatabaseConfig(),
         ];
     }
 
@@ -33,11 +36,47 @@ class ConfigProvider
     public function getDependencies(): array
     {
         return [
-            'invokables' => [
+            'auto' => $this->getInjections(),
+            'invokables' => [],
+            'aliases' => [
+                'db' => Connection::class,
+                'phpmig.adapter' => Database::class,
             ],
-            'factories'  => [
+            'factories' => [
                 LoggerInterface::class => LoggerFactory::class,
             ],
+        ];
+    }
+
+    public function getDatabaseConfig(): array
+    {
+        return [
+            'driver' => '%env(DB_DRIVER)%',
+            'charset' => '%env(DB_CHARSET)%',
+            'collation' => '%env(DB_COLLATION)%',
+            'prefix' => '%env(DB_PREFIX)%',
+            'host' => '%env(DB_HOST)%',
+            'database' => '%env(DB_NAME)%',
+            'port' => '%env(DB_PORT)%',
+            'username' => '%env(DB_USER)%',
+            'password' => '%env(DB_PASSWORD)%',
+        ];
+    }
+
+    private function getInjections(): array
+    {
+        return [
+            'types' => [
+                Database::class => [
+                    'parameters' => [
+                        'adapter' => 'db',
+                        'tableName' => 'migrations',
+                    ]
+                ],
+                'db' => [
+                    'typeOf' => Connection::class,
+                ]
+            ]
         ];
     }
 }

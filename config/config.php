@@ -14,18 +14,19 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
-    \Queue\ConfigProvider::class,
+    \Mezzio\ConfigProvider::class,
+    \Mezzio\Router\ConfigProvider::class,
     \Laminas\Di\ConfigProvider::class,
+    \Queue\ConfigProvider::class,
     \Crm\ConfigProvider::class,
-    \Mezzio\Helper\ConfigProvider::class,
+    ConfigProvider::class,
     \Mezzio\Tooling\ConfigProvider::class,
     \Mezzio\Router\FastRouteRouter\ConfigProvider::class,
     \Laminas\HttpHandlerRunner\ConfigProvider::class,
     // Include cache configuration
     new ArrayProvider($cacheConfig),
     ConfigProvider::class,
-    \Mezzio\ConfigProvider::class,
-    \Mezzio\Router\ConfigProvider::class,
+
     \Laminas\Diactoros\ConfigProvider::class,
 
     // Swoole config to overwrite some services (if installed)
