@@ -46,6 +46,7 @@
     },
     "require": {
         "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+        "amocrm/amocrm-api-library": "^1.7",
         "composer/package-versions-deprecated": "^1.10.99",
         "davedevelopment/phpmig": "dev-master",
         "illuminate/database": "^10.48",

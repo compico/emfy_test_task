@@ -14,4 +14,6 @@ interface QueueInterface
     public function sendTask(TaskInterface $task): int;
 
     public function reserveWithTimeout(int $timeout): TaskInterface;
+
+    public function getTube(): string;
 }

@@ -7,9 +7,10 @@ namespace Queue\Command;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Queue\Client\Beanstalk;
 use Queue\Client\QueueInterface;
 use Queue\Exception\ReserveException;
+use Queue\Queue\CrmQueueInterface;
+use Queue\Queue\DefaultQueueInterface;
 use Queue\Worker\WorkerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
@@ -46,25 +47,31 @@ class ConsumerCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->logger = $this->container->get(LoggerInterface::class);
-        $this->queue = $this->container->get(Beanstalk::class);
 
-        if ($this->queue instanceof Beanstalk) {
-            $tubeName = $input->getOption('tube') ?? '';
-            if ($tubeName === '') {
-                throw new InvalidOptionException();
-            }
-            if ($tubeName !== QueueInterface::DEFAULT_TUBE) {
-                $this->queue->watchTube($tubeName);
-                $this->queue->ignore();
-            }
+        $tubeName = $input->getOption('tube') ?? '';
+        if ($tubeName === '') {
+            throw new InvalidOptionException();
         }
+
+        switch ($tubeName) {
+            case QueueInterface::DEFAULT_TUBE:
+                $this->queue = $this->container->get(DefaultQueueInterface::class);
+                break;
+            case QueueInterface::CRM_TUBE:
+                $this->queue = $this->container->get(CrmQueueInterface::class);
+                break;
+            default:
+                throw new InvalidOptionException();
+        }
+        $this->logger->info('Consumer started for tube ' . $tubeName);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         while (true) {
             try {
-                $task = $this->queue->reserveWithTimeout();
+                $task = $this->queue->reserveWithTimeout(10);
+                $this->logger->info('new task' . $task->toJson() ?? 'empty');
             } catch (ReserveException $e) {
                 sleep(5);
                 continue;
@@ -72,6 +79,7 @@ class ConsumerCommand extends Command
             try {
                 /** @var WorkerInterface $worker */
                 $worker = $this->container->get($task->getWorkerClass());
+                $this->logger->info('new task for ' . $task->getWorkerClass());
                 $worker->handle($task);
             } catch (NotFoundExceptionInterface $e) {
                 $this->logger->warning(

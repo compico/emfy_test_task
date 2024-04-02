@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Crm;
 
+use Crm\ValueObject\OAuthConfig;
+
 /**
  * The configuration provider for the Crm module
  *
@@ -30,9 +32,18 @@ class ConfigProvider
     public function getDependencies(): array
     {
         return [
-            'invokables' => [
-            ],
-            'factories' => [
+            'invokables' => [],
+            'factories' => [],
+            'auto' => [
+                'types' => [
+                    OAuthConfig::class => [
+                        'parameters' => [
+                            'integrationId' => '%env(AMO_CLIENT_ID)%',
+                            'secretKey' => '%env(AMO_CLIENT_SECRET)%',
+                            'redirectDomain' => 'https://%env(APP_DOMAIN)%/api/v1/crm/auth',
+                        ],
+                    ],
+                ],
             ],
         ];
     }

@@ -8,16 +8,17 @@ class AccountRepository
 {
     public function getById(int $accountId): ?Account
     {
-        return Account::newQuery()
+        return Account::getQuery()
             ->where('account_id', $accountId)
             ->first();
     }
 
-    public function newAccount(int $accountId, string $accessToken, string $refreshToken): void
+    public function newAccount(Account $model): void
     {
-        Account::newAccountModel($accountId)
-            ->setAccessToken($accessToken)
-            ->setRefreshToken($refreshToken)
+        Account::newAccountModel($model->getAccountId(), $model->getBaseDomain())
+            ->setAccessToken($model->getAccessToken())
+            ->setRefreshToken($model->getRefreshToken())
+            ->setExpiresIn($model->getExpiresIn())
             ->updateOrCreate();
     }
 }

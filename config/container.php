@@ -18,8 +18,11 @@ $dotenv->usePutenv()->load(__DIR__ . '/../.env');
 $dependencies = $config['dependencies'];
 $dependencies['services']['config'] = $config;
 
-$processor = new Token(getenv(), '%env(', ')%');
+$processor = new Token($_ENV, '%env(', ')%');
 
 $preparedConfigs = (array) $processor->processValue($dependencies);
 
-return new ServiceManager($preparedConfigs);
+$container = new ServiceManager($preparedConfigs);
+$container->get('db');
+
+return $container;

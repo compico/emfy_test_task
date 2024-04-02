@@ -15,18 +15,26 @@ class Account extends Model
 
     /** @var string */
     protected $primaryKey = 'account_id';
-    protected int $accountId;
-    protected string $accessToken;
-    protected string $refreshToken;
-    protected Carbon $createdAt;
-    protected Carbon $updatedAt;
-    protected Carbon $deletedAt;
+    /** @var bool */
+    public $incrementing = false;
 
-    public static function newAccountModel(int $accountId): self
+    protected $fillable = [
+        'account_id',
+        'base_domain',
+        'access_token',
+        'refresh_token',
+        'expires_in',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    public static function newAccountModel(int $accountId, string $baseDomain): self
     {
         $account = new Account();
 
-        $account->accountId = $accountId;
+        $account->setAttribute('account_id', $accountId);
+        $account->setAttribute('base_domain', $baseDomain);
 
         return $account;
     }
@@ -48,8 +56,10 @@ class Account extends Model
         $query->updateOrCreate(
             ['account_id' => $this->getAccountId()],
             [
+                'base_domain' => $this->getBaseDomain(),
                 'access_token' => $this->getAccessToken(),
                 'refresh_token' => $this->getRefreshToken(),
+                'expires_in' => $this->getExpiresIn(),
             ]
         );
 
@@ -58,45 +68,56 @@ class Account extends Model
 
     public function getAccountId(): int
     {
-        return $this->accountId;
+        return (int)$this->getAttributeFromArray('account_id');
+    }
+
+    public function getBaseDomain(): string
+    {
+        return (string)$this->getAttributeFromArray('base_domain');
     }
 
     public function getAccessToken(): string
     {
-        return $this->accessToken;
+        return (string)$this->getAttributeFromArray('access_token');
     }
 
     public function setAccessToken(string $accessToken): self
     {
-        $this->accessToken = $accessToken;
-
-        return $this;
+        return $this->setAttribute('access_token', $accessToken);
     }
 
     public function getRefreshToken(): string
     {
-        return $this->refreshToken;
+        return (string)$this->getAttributeFromArray('refresh_token');
     }
 
     public function setRefreshToken(string $refreshToken): self
     {
-        $this->refreshToken = $refreshToken;
+        return $this->setAttribute('refresh_token', $refreshToken);
+    }
 
-        return $this;
+    public function getExpiresIn(): int
+    {
+        return (int)$this->getAttributeFromArray('expires_in');
+    }
+
+    public function setExpiresIn(int $expiresIn): self
+    {
+        return $this->setAttribute('expires_in', $expiresIn);
     }
 
     public function getCreatedAt(): Carbon
     {
-        return $this->createdAt;
+        return $this->getAttributeFromArray('created_at');
     }
 
     public function getUpdatedAt(): Carbon
     {
-        return $this->updatedAt;
+        return $this->getAttributeFromArray('updated_at');
     }
 
-    public function getDeletedAt(): Carbon
+    public function getDeletedAt(): ?Carbon
     {
-        return $this->deletedAt;
+        return $this->getAttributeFromArray('deleted_at');
     }
 }

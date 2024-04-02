@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Crm\Task;
 
 use Crm\Worker\WidgetInstallWorker;
@@ -10,18 +12,19 @@ class WidgetInstallTask implements TaskInterface
 {
     use TaskTrait;
 
-    protected string $code;
     public const WORKER_CLASS = WidgetInstallWorker::class;
 
-    public function __construct(string $code)
-    {
-        $this->code = $code;
+    public function __construct(
+        private readonly string $code,
+        private readonly string $baseDomain,
+    ) {
     }
 
     public static function fromArray(array $data): self
     {
         return new WidgetInstallTask(
-            (string)($data['code'] ?? '')
+            (string)($data['code'] ?? ''),
+            (string)($data['base_domain'] ?? ''),
         );
     }
 
@@ -29,6 +32,7 @@ class WidgetInstallTask implements TaskInterface
     {
         return [
             'task' => self::class,
+            'base_domain' => $this->baseDomain,
             'code' => $this->code,
         ];
     }
@@ -41,5 +45,10 @@ class WidgetInstallTask implements TaskInterface
     public function getCode(): string
     {
         return $this->code;
+    }
+
+    public function getBaseDomain(): string
+    {
+        return $this->baseDomain;
     }
 }

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Queue;
 
+use Pheanstalk\Pheanstalk;
 use Queue\Client\Beanstalk;
 use Queue\Client\QueueInterface;
 use Queue\Command\ConsumerCommand;
 use Queue\Factory\PheanstalkFactory;
+use Queue\Queue\CrmQueueInterface;
+use Queue\Queue\DefaultQueueInterface;
 
 /**
  * The configuration provider for the Queue module
@@ -39,10 +42,25 @@ class ConfigProvider
         return [
             'invokables' => [],
             'factories' => [
-                Beanstalk::class => PheanstalkFactory::class,
+                Pheanstalk::class => PheanstalkFactory::class,
             ],
-            'preferences' => [
-                QueueInterface::class => Beanstalk::class,
+            'auto' => [
+                'types' => [
+                    CrmQueueInterface::class => [
+                        'typeOf' => Beanstalk::class,
+                        'parameters' => [
+                            'connection' => Pheanstalk::class,
+                            'tube' => QueueInterface::CRM_TUBE,
+                        ],
+                    ],
+                    DefaultQueueInterface::class => [
+                        'typeOf' => Beanstalk::class,
+                        'parameters' => [
+                            'connection' => Pheanstalk::class,
+                            'tube' => QueueInterface::DEFAULT_TUBE,
+                        ],
+                    ],
+                ],
             ],
         ];
     }

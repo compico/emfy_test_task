@@ -7,31 +7,28 @@ namespace Queue\Client;
 use Pheanstalk\Exception\DeadlineSoonException;
 use Pheanstalk\Pheanstalk;
 use Queue\Exception\ReserveException;
+use Queue\Queue\CrmQueueInterface;
+use Queue\Queue\DefaultQueueInterface;
 use Queue\Task\TaskInterface;
 
 use function json_decode;
 
-class Beanstalk implements QueueInterface
+class Beanstalk implements QueueInterface, CrmQueueInterface, DefaultQueueInterface
 {
-    protected Pheanstalk $connection;
     public function __construct(
-        Pheanstalk $pheanstalk,
+        protected readonly Pheanstalk $connection,
+        protected readonly string $tube,
     ) {
-        $this->connection = $pheanstalk;
+        if ($this->tube !== QueueInterface::DEFAULT_TUBE) {
+            $this->connection->useTube($this->tube);
+            $this->connection->watch($this->tube);
+            $this->connection->ignore(QueueInterface::DEFAULT_TUBE);
+        }
     }
 
-    public function useTube(string $tubeName = QueueInterface::DEFAULT_TUBE): self
+    public function getTube(): string
     {
-        $this->connection->useTube($tubeName);
-
-        return $this;
-    }
-
-    public function watchTube(string $tubeName = QueueInterface::DEFAULT_TUBE): self
-    {
-        $this->connection->watch($tubeName);
-
-        return $this;
+        return $this->tube;
     }
 
     public function ignore(string $tubeName = QueueInterface::DEFAULT_TUBE): self

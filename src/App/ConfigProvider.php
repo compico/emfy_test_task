@@ -27,6 +27,7 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'database' => $this->getDatabaseConfig(),
+            'routes' => $this->getRoutes(),
         ];
     }
 
@@ -77,6 +78,13 @@ class ConfigProvider
                     'typeOf' => Connection::class,
                 ]
             ]
+        ];
+    }
+
+    private function getRoutes(): array
+    {
+        return [
+            'hook_url' => 'https://%env(APP_DOMAIN)%/api/v1/crm/webhook'
         ];
     }
 }

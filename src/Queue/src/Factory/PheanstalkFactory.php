@@ -18,7 +18,7 @@ class PheanstalkFactory
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): Beanstalk
+    public function __invoke(ContainerInterface $container): Pheanstalk
     {
         /** @var array $config */
         $config = $container->get('config')['beanstalk'] ?? [];
@@ -34,11 +34,9 @@ class PheanstalkFactory
             throw new EmptyConfigException('Beanstalk config is empty');
         }
 
-        return new Beanstalk(
-            Pheanstalk::create(
+        return Pheanstalk::create(
                 $host,
                 $port
-            )
         );
     }
 }

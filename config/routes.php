@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Crm\Handler\AuthHandler;
+use Crm\Handler\WebhookHandler;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
@@ -38,5 +40,6 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/api/v1/crm/auth', Crm\Handler\AuthHandler::class);
+    $app->get('/api/v1/crm/auth', AuthHandler::class);
+    $app->post('/api/v1/crm/webhook', WebhookHandler::class);
 };

@@ -11,30 +11,28 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use Queue\Client\QueueInterface;
+use Queue\Queue\CrmQueueInterface;
 
 class AuthHandler implements RequestHandlerInterface
 {
-    protected LoggerInterface $logger;
-    protected QueueInterface $queue;
-
-    public function __construct(LoggerInterface $logger, QueueInterface $queue)
-    {
-        $this->logger = $logger;
-        $this->queue  = $queue;
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly CrmQueueInterface $queue,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $params = $request->getQueryParams();
 
-        if (!isset($params['code']) || empty($params['code'])) {
-            $this->logger->error('empty code');
+        if (!isset($params['code']) || !isset($params['referer'])) {
+            $this->logger->error('empty code or referer');
             return new EmptyResponse(StatusCodeInterface::STATUS_OK);
         }
 
         $this->queue->sendTask(new WidgetInstallTask(
             $params['code'],
+            $params['referer'],
         ));
 
         return new EmptyResponse(StatusCodeInterface::STATUS_OK);
